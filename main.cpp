@@ -7,6 +7,8 @@
 #include <map>
 #include <vector>
 #include <random>
+#include <algorithm>
+#include <cfloat>
 
 using namespace std;
 int main (int argc, char *argv[]) {
@@ -37,9 +39,10 @@ int main (int argc, char *argv[]) {
     }
 
     // shuffle the coordinate vectors
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-    shuffle(pointsX.begin(), pointsX.end(), default_random_engine(seed));
-    shuffle(pointsY.begin(), pointsY.end(), default_random_engine(seed));
+    unsigned seedX = std::chrono::system_clock::now().time_since_epoch().count();
+    shuffle(pointsX.begin(), pointsX.end(), default_random_engine(seedX));
+    unsigned seedY = std::chrono::system_clock::now().time_since_epoch().count();
+    shuffle(pointsY.begin(), pointsY.end(), default_random_engine(seedY));
 
     // fill the points with random coordinates
     int** points = new int*[numPoints];
@@ -52,9 +55,9 @@ int main (int argc, char *argv[]) {
     map<int, int> pointBlue;
 
     // set the final entry to white to color the points against the cells
-    pointRed[numPoints] = 0;
-    pointGreen[numPoints] = 0;
-    pointBlue[numPoints] = 0;
+    pointRed[numPoints] = 255;
+    pointGreen[numPoints] = 255;
+    pointBlue[numPoints] = 255;
 
     // populate maps with random colors
     for (int i=0; i<numPoints; i++) {
@@ -81,16 +84,16 @@ int main (int argc, char *argv[]) {
 
     // loop through points and set color to white (numPoints)
     for (int i=0; i<numPoints; i++) {
-        imageArray[points[i][1]][points[i][0]] = numPoints;
+        imageArray[points[i][0]][points[i][1]] = numPoints;
     }
 
     // TODO write points to file by pulling colors from maps
-    ofstream output("C:/Users/jeffp/CLionProjects/HPC3/output.ppm", std::ios_base::binary);
+    ofstream output("C:/Users/jeffp/CLionProjects/HPC3/output.ppm", ios_base::binary);
 
     // store the image header in our output file
-    output << "P6" << "\n";
+    output << "P3" << "\n";
     output << imageSize << " " << imageSize << "\r\n";
-    output << 255 << "\r\n";
+    output << "255" << "\r\n";
 
     // store the updated array in our output file
     for(int row = 0; row < imageSize; ++row) {
@@ -99,6 +102,8 @@ int main (int argc, char *argv[]) {
         }
         output << "\r\n";
     }
+
+    output.close();
 
 
 
