@@ -2,7 +2,6 @@
 #include <fstream>
 #include <cmath>
 #include <chrono>
-#include <sstream>
 #include <cstdlib>
 #include <map>
 #include <vector>
@@ -87,7 +86,7 @@ int main (int argc, char *argv[]) {
         imageArray[points[i][0]][points[i][1]] = numPoints;
     }
 
-    // TODO write points to file by pulling colors from maps
+    // write points to file by pulling colors from maps
     ofstream output("C:/Users/jeffp/CLionProjects/HPC3/output.ppm", ios_base::binary);
 
     // store the image header in our output file
@@ -102,12 +101,16 @@ int main (int argc, char *argv[]) {
         }
         output << "\r\n";
     }
-
     output.close();
 
+    // delete arrays from memory
+    for(int i = 0; i < imageSize; i++)
+        delete[] imageArray[i];
+    delete[] imageArray;
 
+    for(int i = 0; i < numPoints; i++)
+        delete[] points[i];
+    delete[] points;
 
-
-    // TODO delete arrays from memory
     return 0;
 }
