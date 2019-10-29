@@ -2,7 +2,6 @@
 #include <fstream>
 #include <cmath>
 #include <chrono>
-#include <sstream>
 #include <cstdlib>
 #include <map>
 #include <vector>
@@ -43,7 +42,7 @@ int main (int argc, char *argv[]) {
     unsigned seedY = std::chrono::system_clock::now().time_since_epoch().count();
     shuffle(pointsY.begin(), pointsY.end(), default_random_engine(seedY));
 
-    // fill the points with random coordinates
+    // create an array to hold the points and fill it with random coordinates
     int* points = new int[numPoints + numPoints];
     for(int i = 0; i < numPoints; i++) {
         points[i] = pointsX[i];
@@ -67,10 +66,11 @@ int main (int argc, char *argv[]) {
         pointBlue[i] = rand() % 256;
     }
 
+    // start timing for the calculation
     struct timeval start, end;
     gettimeofday(&start, NULL);
 
-    // loop through each cell, compare to each point and assign cell to closest point
+    // loop through each cell, compare them to each point and assign the cell's value to closest point
     for (int x=0; x<imageSize * imageSize; x++) {
         double minDistance = DBL_MAX;
         int minPoint = -1;
@@ -84,31 +84,28 @@ int main (int argc, char *argv[]) {
         imageArray[x] = minPoint;
     }
 
+    // end timing and print processing time
     gettimeofday(&end, NULL);
-
     long seconds = (end.tv_sec - start.tv_sec);
     long micros = ((seconds * 1000000) + end.tv_usec) - (start.tv_usec);
-
     printf("Processing time elpased is %zu seconds or %zu micros\n", seconds, micros);
 
-    // loop through points and set color to white (numPoints)
+    // loop through the points and set color to white so they are visible against the colored cells
     for (int i=0; i<numPoints; i++) {
         imageArray[points[i + numPoints] + imageSize * points[i]] = numPoints;
     }
-    
-    ofstream output("output.ppm", ios_base::binary);
 
     // store the image header in our output file
+    ofstream output("output.ppm", ios_base::binary);
     output << "P3" << "\n";
     output << imageSize << " " << imageSize << "\r\n";
     output << "255" << "\r\n";
 
-    // store the updated array in our output file
+    // store the image in our output file
     for(int i = 0; i < imageSize * imageSize; i++) {
         output << pointRed[imageArray[i]] << " " << pointGreen[imageArray[i]] << " " << pointBlue[imageArray[i]] << " ";
         output << "\r\n";
     }
-
     output.close();
 
     // delete arrays from memory
