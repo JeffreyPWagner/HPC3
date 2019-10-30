@@ -70,7 +70,7 @@ int main (int argc, char *argv[]) {
     struct timeval start, end;
     gettimeofday(&start, NULL);
 
-    // loop through each cell, compare them to each point and assign the cell's value to closest point
+    // loop through each cell, compare them to each point and assign the cell's value to match the closest point
     for (int x=0; x<imageSize * imageSize; x++) {
         double minDistance = DBL_MAX;
         int minPoint = -1;
